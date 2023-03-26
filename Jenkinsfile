@@ -16,13 +16,15 @@ pipeline {
                 sh 'echo ${IP_ADDRESS} '
                 sh ''' #!/bin/bash
                  echo "hello world"                  
-                 echo 'P@ssword2020' | ansible-playbook ubuntu_init_with_ansible.yaml -i hosts -u root '''
+                 echo 'P@ssword2020' | ansible-playbook rocky_init_with_ansible.yaml -i hosts -u root '''
 
             }
         }
-        stage('mise en place website ') {
+        stage('test access to the server ') {
             steps {
-                sh 'ansible-playbook install-nginx-andwebsite.yaml -i hosts '
+                sh 'ssh ansible@${IP_ADDRESS}'
+                sh 'ls'
+                sh 'exit'
             }
         }
         stage('Deploy') {
