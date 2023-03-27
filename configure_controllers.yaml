@@ -134,16 +134,16 @@
 
     - name: Create .kube directory
       file:
-        path: "{{ ansible_env.HOME }}/.kube"
+        path: $HOME/.kube
         state: directory
 
     - name: Copy admin.conf to .kube/config
-      command: cp -i /etc/kubernetes/admin.conf {{ ansible_env.HOME }}/.kube/config
+      command: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
       timeout: 10
 
     - name: Change ownership of .kube/config
       file:
-        path: "{{ ansible_env.HOME }}/.kube/config"
+        path: $HOME/.kube/config
         owner: "{{ ansible_user_id }}"
         group: "{{ ansible_user_id }}"
         mode: "0644"
