@@ -8,7 +8,7 @@ The following repo has 4 main Ansible components:
 - join.yaml (join nodes to cluster)
 - reset.yaml (reset a VM)
 
-## Pre-requesists
+## Pre-requisites
 
 - Have ansible installed on local machine
 - Setup SSH key pair with all VMs

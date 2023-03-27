@@ -1,60 +1,60 @@
-
 - hosts: workers
   remote_user: ansible
-  become: true
+  become: yes
   vars:
     ansible_user: ansible
   tasks:
-    
-   - name: Update
-     dnf:
-      name: epel-release
-      state: latest
+    - name: Update dnf to latest
+      dnf:
+        name: epel-release
+        state: latest
 
-   - name: disable swap
-     shell: swapoff -a
+    - name: Disabling swap on hosts…
+      become: yes
+      shell: swapoff -a
 
-   - name: disable swap in fstab
-     replace:
-       path: /etc/fstab
-       regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
-       replace: '# \1'
+    - name: Disabling swap from fstab…
+      become: yes
+      replace:
+        path: /etc/fstab
+        regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+        replace: '# \1'
 
-   - name: Disable SELinux
-     ansible.posix.selinux:
-       state: disabled
+    - name: Disable SELinux
+      ansible.posix.selinux:
+        state: disabled
 
-   - name: Firewall allow ports
-     firewalld:
-       permanent: true
-       state: enabled
-       immediate: true
-       port: "{{ item }}/tcp"
-     with_items:
-      - 6443
-      - 2379
-      - 2380
-      - 10250
-      - 10251
-      - 10252
-      - 10248
+    - name: Firewall allow ports
+      firewalld:
+        permanent: true
+        state: enabled
+        immediate: true
+        port: "{{ item }}/tcp"
+      with_items:
+        - 6443
+        - 2379
+        - 2380
+        - 10250
+        - 10251
+        - 10252
+        - 10248
 
-   - name: Netfilter
-     shell: |
-       modprobe br_netfilter
-       sh -c "echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables"
-       sh -c "echo '1' > /proc/sys/net/ipv4/ip_forward" 
-     become: true
+    - name: Netfilter
+      shell: |
+        modprobe br_netfilter
+        sh -c "echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables"
+        sh -c "echo '1' > /proc/sys/net/ipv4/ip_forward"
+      become: true
 
-   - name: Add Docker repository
-     shell: |
+    - name: Add Docker repository
+      shell: |
         dnf config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
         dnf install docker-ce -y
         systemctl start docker
         systemctl enable docker
 
-   - name: Add Kubernetes repository
-     shell: |
+    - name: Add Kubernetes repository
+      shell: |
         cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
         [kubernetes]
         name=Kubernetes
@@ -66,39 +66,39 @@
         exclude=kubelet kubeadm kubectl
         EOF
 
-   - name: Install kubernetes
-     dnf:   
-       name: "{{ item }}"
-       state: present
-       disable_excludes: kubernetes
-     with_items:
-       - kubelet
-       - kubeadm
-       - kubectl
+    - name: Install kubernetes
+      dnf:
+        name: "{{ item }}"
+        state: present
+        disable_excludes: kubernetes
+      with_items:
+        - kubelet
+        - kubeadm
+        - kubectl
 
-   - name: Enable and start kubelet service
-     systemd:
-       name: kubelet
-       state: started
-       enabled: yes 
+    - name: Enable and start kubelet service
+      systemd:
+        name: kubelet
+        state: started
+        enabled: yes
 
-   - name: Creates kube directory
-     file:
-       path: /home/kube
-       state: directory
-   
-   - name: Creating Kube Config File
-     become: true
-     copy:
-       src: /home/jenkinsuser/workspace/init_rocky_to_ansible/kubeadm-config.yaml
-       dest: "/home/kube/kubeadm-config.yaml"
+    - name: Creates kube directory
+      file:
+        path: /home/kube
+        state: directory
 
-   - name: Remove containerd config files
-     file:
-       state: absent
-       path: /etc/containerd/config.toml
-   
-   - name: Restart containerd
-     systemd:
-       name: containerd
-       state: restarted
+    - name: Creating Kube Config File
+      become: true
+      copy:
+        src: /home/jenkinsuser/workspace/init_rocky_to_ansible/kubeadm-config.yaml
+        dest: "/home/kube/kubeadm-config.yaml"
+
+    - name: Remove containerd config files
+      file:
+        state: absent
+        path: /etc/containerd/config.toml
+
+    - name: Restart containerd
+      systemd:
+        name: containerd
+        state: restarted
