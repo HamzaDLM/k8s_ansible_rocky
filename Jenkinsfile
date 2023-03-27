@@ -6,29 +6,19 @@ pipeline {
     }
     
     stages {
-        stage('Build') {
-            steps {
-                
-                print "DEBUG: parameter IP_ADDRESS = ${IP_ADDRESS}"
-                sh 'echo $IP_ADDRESS >> hosts'  
-                sh ' cat hosts'
-                sh 'echo ${IP_ADDRESS} '
-                sh ''' #!/bin/bash
-                 echo "hello world"                  
-                 echo 'P@ssword2020' | ansible-playbook rocky_init_with_ansible.yaml -i hosts -u root '''
-
+        stage('Initialize & Install Dependencies') {
+            steps { 
+                sh 'ansible-playbook initialize.yaml -i hosts -u root'
             }
         }
-        stage('test access to the server ') {
+        stage('Setup Controller Nodes') {
             steps {
-                sh 'ssh ansible@${IP_ADDRESS}'
-                sh 'ls'
-                sh 'exit'
+                sh 'ansible-playbook controllers.yaml -i hosts -u root'
             }
         }
-        stage('Deploy') {
+        stage('Setup Worker Nodes') {
             steps {
-                echo 'Deploying.....'
+                sh 'ansible-playbook workers.yaml -i hosts -u root'
             }
         }
     }
