@@ -1,0 +1,4 @@
+---
+- import-playbook: prerequesites.yaml
+- import-playbook: configure_controllers.yaml
+- import-playbook: configure_workers.yaml

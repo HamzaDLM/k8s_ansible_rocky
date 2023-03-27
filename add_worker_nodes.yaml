@@ -1,0 +1,8 @@
+---
+- hosts: workers
+  tasks:
+    - name: Copying token into the worker nodes
+      copy: src={{ token_file }} dest=join_token
+
+    - name: Joining worker nodes with controller nodes
+      shell: "`grep -i 'kubeadm join' join_token`"

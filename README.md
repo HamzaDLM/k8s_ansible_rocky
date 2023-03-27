@@ -18,6 +18,14 @@ The following repo has 4 main Ansible components:
 
 ## Install master nodes
 
+:warning: Disabling swap apparently doesn't work and I needed to ssh and do it manually after `kubeadm reset -f`
+maybe the placement is wrong ?
+
+```
+sudo swapoff -a
+sudo sed -i '/ swap / s/^/#/' /etc/fstab
+```
+
 ## Install worker nodes
 
 ## Join worker and master nodes
