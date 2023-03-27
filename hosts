@@ -4,8 +4,5 @@ ansible_user=master
 ansible_ssh_pass=P@ssword2020
 ansible_sudo_pass=P@ssword2020
 
-[hosts]
+[controllers]
 10.0.0.210
-10.0.0.211
-10.0.0.212
-10.0.0.213
