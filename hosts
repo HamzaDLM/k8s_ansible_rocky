@@ -6,3 +6,8 @@ ansible_sudo_pass=P@ssword2020
 
 [controllers]
 10.0.0.210
+10.0.0.211
+
+[workers]
+10.0.0.212
+10.0.0.213
