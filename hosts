@@ -11,3 +11,7 @@ ansible_sudo_pass=P@ssword2020
 [workers]
 10.0.0.212
 10.0.0.213
+
+[hosts:children]
+controllers
+workers
