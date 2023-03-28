@@ -138,7 +138,7 @@
         state: directory
 
     - name: Copy admin.conf to .kube/config
-      command: cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+      command: cp -R -u -p /etc/kubernetes/admin.conf $HOME/.kube/config
       timeout: 10
 
     - name: Change ownership of .kube/config
